@@ -1,10 +1,3 @@
-const objects = [
-	{ id: 1, title: "Guida a JavaScript", slug: "guida-a-javascript" },
-	{ id: 2, title: "Introduzione a React", slug: "introduzione-a-react" },
-	{ id: 3, title: "Come usare Node.js", slug: "come-usare-nodejs" },
-	{ id: 4, title: "SEO per principianti", slug: "seo-per-principianti" },
-];
-
 const getInitials = (nomeCompleto) => {
 	const [nome, cognome] = nomeCompleto
 		.split(" ")
@@ -29,8 +22,8 @@ const average = (arr) => {
 };
 
 const isPalindrome = (str) => {
-	const reverseStr = [...str].reverse().join("");
-	return str === reverseStr;
+	const reverseStr = [...str.trim()].reverse().join("");
+	return str.trim() === reverseStr;
 };
 
 function findPostById(arr, id) {
