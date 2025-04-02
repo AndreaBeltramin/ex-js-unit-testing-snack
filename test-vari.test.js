@@ -4,15 +4,24 @@ const {
 	average,
 	isPalindrome,
 	findPostById,
+	addPost,
+	removePost,
 } = require("./funzioni.js");
 
-const objects = [
-	{ id: 1, title: "Guida a JavaScript", slug: "guida-a-javascript" },
-	{ id: 2, title: "Introduzione a React", slug: "introduzione-a-react" },
-	{ id: 3, title: "Come usare Node.js", slug: "come-usare-nodejs" },
-	{ id: 4, title: "SEO per principianti", slug: "seo-per-principianti" },
-	{ id: 5, title: "SEO per principianti" },
-];
+let posts;
+
+beforeEach(() => {
+	posts = [
+		{ id: 1, title: "Guida a JavaScript", slug: "guida-a-javascript" },
+		{ id: 2, title: "Introduzione a React", slug: "introduzione-a-react" },
+		{ id: 3, title: "Come usare Node.js", slug: "come-usare-nodejs" },
+		{ id: 4, title: "SEO per principianti", slug: "seo-per-principianti" },
+	];
+});
+
+afterEach(() => {
+	posts = [];
+});
 
 describe("Test per manipolare le stringhe", () => {
 	test("La funzione getInitials restituisce le iniziali di un nome completo.", () => {
@@ -36,17 +45,18 @@ describe("Test per manipolare gli array", () => {
 	});
 
 	test("La funzione findPostById restituisce il post corretto dato l’array di post e l’id", () => {
-		expect(findPostById(objects, 2)).toEqual({
+		expect(findPostById(posts, 2)).toEqual({
 			id: 2,
 			title: "Introduzione a React",
 			slug: "introduzione-a-react",
 		});
-		expect(() => findPostById(objects, "a")).toThrow(
+		expect(() => findPostById(posts, "a")).toThrow(
 			"Id non valido, deve essere un numero"
 		);
-		expect(() => findPostById(objects, 5)).toThrow(
-			"Il post deve contenere le chiavi id, title e slug"
+		expect(() => findPostById([2, 40, 14], 2)).toThrow(
+			"L' array di post non è nel formato corretto"
 		);
+		expect(findPostById(posts, 10)).toBe(null);
 	});
 });
 
@@ -65,4 +75,41 @@ describe("Creazione di slug", () => {
 		expect(() => createSlug("")).toThrow("Titolo non valido");
 		expect(() => createSlug(null)).toThrow("Titolo non valido");
 	});
+});
+
+test("Dopo aver aggiunto un post con la funzione addPost, l'array posts deve contenere un elemento in più.", () => {
+	addPost(posts, {
+		id: 6,
+		title: "HTML e CSS",
+		slug: "html-css-per-principianti",
+	});
+	expect(posts).toHaveLength(5);
+});
+
+test("Dopo aver rimosso un post con la funzione removePost, l'array posts deve contenere un elemento in meno.", () => {
+	removePost(posts, 2);
+	expect(posts).toHaveLength(3);
+});
+
+test("Se si tenta di aggiungere un post con un id o uno slug già esistente, la funzione addPost deve lanciare un errore.", () => {
+	expect(() =>
+		addPost(posts, {
+			id: 2,
+			title: "HTML e CSS",
+			slug: "html-css-per-principianti",
+		})
+	).toThrow("Post con id già esistente");
+	expect(() =>
+		addPost(posts, {
+			id: 10,
+			title: "Typescript",
+			slug: "come-usare-nodejs",
+		})
+	).toThrow("Post con slug già esistente");
+});
+
+test("Se viene passato un array di post come secondo argomento, la funzione createSlug incrementa di 1 se lo slug esiste già.", () => {
+	expect(createSlug("Introduzione a React", posts)).toBe(
+		"introduzione-a-react-1"
+	);
 });
